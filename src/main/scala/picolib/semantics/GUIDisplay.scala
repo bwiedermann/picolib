@@ -54,13 +54,13 @@ trait GUIDisplay extends Picobot {
   
   // a pane with all the buttons to control the animation
   private val buttonPane = 
-    new HBox{content=List(runButton, stopButton, stepButton, resetButton)}
+    new HBox{children = List(runButton, stopButton, stepButton, resetButton)}
   
   // a pane that contains a visualization for each cell in the maze
-  private val mazePane = new Pane{content = botboxes}
+  private val mazePane = new Pane{children = botboxes}
   
   // a pane for the controller and the maze
-  private val botPane = new VBox {content = List(buttonPane, mazePane)}
+  private val botPane = new VBox {children = List(buttonPane, mazePane)}
   
   /** use this as the main stage for an app */
   val mainStage = new JFXApp.PrimaryStage {
@@ -77,11 +77,11 @@ trait GUIDisplay extends Picobot {
   abstract override def reset() = {
     stop()
     super.reset()
-    mazePane.content = botboxes
+    mazePane.children = botboxes
   }
   
   abstract override def run() = {
-    stepAnimation.cycleCount = INDEFINITE
+    stepAnimation.cycleCount = Timeline.Indefinite
     stepAnimation.play()
   }
   
@@ -92,7 +92,7 @@ trait GUIDisplay extends Picobot {
     event: ActionEvent ⇒
       if (canMove) {
         super.step()
-        mazePane.content = botboxes
+        mazePane.children = botboxes
       }
   }
   
