@@ -65,7 +65,7 @@ trait GUIDisplay extends Picobot {
   /** use this as the main stage for an app */
   val mainStage = new JFXApp.PrimaryStage {
     width = CELL_SIZE * (maze.width) 
-    height = buttonPane.height.value + CELL_SIZE * (maze.height + 1)
+    height = buttonPane.height.value + CELL_SIZE * (maze.height + 2)
     scene = new Scene { content = botPane }
   }
   
