@@ -1,8 +1,8 @@
-package picolib.semantics
+package picolib
 
 /**  A class that describes the contents of a location in the maze.   */
 abstract class RelativeDescription(val name: Char) {
-    override def toString = name.toString
+    override def toString: String = name.toString
 }
 
 /**  The location has a wall */
@@ -14,7 +14,7 @@ object Anything extends RelativeDescription('*')
 
 /**  A class that describes a direction the robot can move. */
 abstract class MoveDirection(val name: Char) {
-    override def toString = name.toString
+    override def toString: String = name.toString
 }
 
 /** Move to the north */
@@ -33,15 +33,22 @@ object StayHere extends MoveDirection('X')
   */
 case class Surroundings(north: RelativeDescription, east: RelativeDescription, 
                         west: RelativeDescription, south: RelativeDescription) {
-    override def toString =
+    override def toString: String =
         north.toString + east.toString + west.toString + south.toString
 }
 
 /**  A class that represents a state in which the robot may find itself.
   */
 case class State(name: String) {
-    override def toString = name
+    override def toString: String = name
 }
+
+/** Factory for states */
+object State {
+  /** create a state with a number */
+  def apply(n: Int): State = State(n.toString)
+}
+
 
 /**  A class that represents a rule. A rule describes when and how a robot can move.
   *  If the robot is in a particular state and its surrounding positions match a 
@@ -61,6 +68,6 @@ case class Rule(startState:    State,
 		            moveDirection: MoveDirection, 
 		            endState:      State) 
 {		        
-  override def toString = 
+  override def toString: String =
     startState + " " + surroundings + " -> " + moveDirection + " " + endState	  			   
 }
