@@ -1,4 +1,4 @@
-package picobot.library
+package picolib
 
 /**
  * Class that represents a position in the maze.

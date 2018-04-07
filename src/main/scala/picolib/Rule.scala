@@ -1,4 +1,4 @@
-package picobot.library
+package picolib
 
 /**  A class that describes the contents of a location in the maze.   */
 abstract class RelativeDescription(val name: Char) {

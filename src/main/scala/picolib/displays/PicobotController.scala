@@ -1,6 +1,6 @@
-package picobot.library.displays
+package picolib.displays
 
-import picobot.library.{Map, Picobot, Rule}
+import picolib.{Map, Picobot, Rule}
 
 trait PicobotController {
   protected var _map: Map = null

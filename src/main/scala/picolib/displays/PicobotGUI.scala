@@ -1,6 +1,6 @@
-package picobot.library.displays
+package picolib.displays
 
-import picobot.library.{Picobot, Position}
+import picolib.{Picobot, Position}
 
 import scala.language.postfixOps
 import scalafx.Includes._

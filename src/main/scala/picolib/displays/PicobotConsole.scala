@@ -1,4 +1,4 @@
-package picobot.library.displays
+package picolib.displays
 
 abstract class PicobotConsoleApp extends App with PicobotConsoleController {
 

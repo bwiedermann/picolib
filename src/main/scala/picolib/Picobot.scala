@@ -1,4 +1,4 @@
-package picobot.library
+package picolib
 
 import scala.collection.mutable.Set
 
