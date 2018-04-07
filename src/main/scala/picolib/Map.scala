@@ -1,23 +1,4 @@
-package picolib.maze
-
-/**
- * Class that represents a position in the maze.
- *
- *
- * @constructor Create a new Position.
- *
- * @param x
- * @param y
- */
-case class Position(x: Int, y: Int) {
-
-  def northOf = Position(x, y - 1)
-  def southOf = Position(x, y + 1)
-  def eastOf = Position(x + 1, y)
-  def westOf = Position(x - 1, y)
-
-  override def toString = "(%d, %d)".format(x, y)
-}
+package picobot.library
 
 /**
  * Class that represents a maze.
@@ -27,13 +8,12 @@ case class Position(x: Int, y: Int) {
  * increase from left to right. Row numbers increase from top to bottom.
  *
  * @constructor Create a new Maze.
- *
  * @param width The number of columns in the maze
  * @param height The number of rows in the maze
  * @param wallPositions The positions in the maze that correspond to walls
  * (all other positions are assumed to be open)
  */
-class Maze(val width: Int, val height: Int, val wallPositions: Set[Position]) {
+class Map(val width: Int, val height: Int, val wallPositions: Set[Position]) {
 
   /** all positions in the maze */
   lazy val positions =
@@ -62,18 +42,17 @@ class Maze(val width: Int, val height: Int, val wallPositions: Set[Position]) {
     (0 until width).map(column ⇒
       (0 until height).map(row ⇒
         if (isWall(Position(row, column)))
-          Maze.WALL_CHARACTER
-        else Maze.NOWALL_CHARACTER)
+          Map.WALL_CHARACTER
+        else Map.NOWALL_CHARACTER)
         .mkString)
       .mkString("\n")
   }
 }
-
 /**
  * A Maze factory
  *
  */
-object Maze {
+object Map {
   val WALL_CHARACTER = '+'
   val NOWALL_CHARACTER = ' '
 
@@ -85,7 +64,7 @@ object Maze {
    *  @param data a list of strings that describe the maze
    *  @return a Maze instance
    */
-  def apply(data: List[String]): Maze = {
+  def apply(data: List[String]): Map = {
     val height = data.length
     val width = data(0).length
 
@@ -100,9 +79,9 @@ object Maze {
       if columnData._1 == WALL_CHARACTER
     } yield Position(columnData._2, rowData._2)
 
-    new Maze(width, height, wall_positions.toSet)
+    new Map(width, height, wall_positions.toSet)
   }
-  
+
   /**
    * Parses a maze from a file (represented as a list of lines) and
    * results in a Maze. The method will issue an error if the maze file
@@ -111,6 +90,6 @@ object Maze {
    *  @param filename the name of a file with a maze in it
    *  @return a Maze instance
    */
-  def apply(filename: String): Maze =
-     Maze(io.Source.fromFile(filename).getLines().toList)
+  def apply(filename: String): Map =
+     Map(io.Source.fromFile(filename).getLines().toList)
 }

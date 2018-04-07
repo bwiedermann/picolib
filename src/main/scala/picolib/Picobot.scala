@@ -1,7 +1,4 @@
-package picolib.semantics
-
-import picolib.maze._
-import picolib.semantics._
+package picobot.library
 
 import scala.collection.mutable.Set
 
@@ -9,19 +6,19 @@ import scala.collection.mutable.Set
   *  A class that can set a robot loose on a maze. The robot starts at a random
   * position in the maze.
   *
-  *  @param maze The Maze that the PicoBot will search
+  *  @param map The Maze that the PicoBot will search
   *  @param rules A list of Rules that the PicoBot will use to search the maze.
   */
-class Picobot(val maze: Maze, val rules: List[Rule]) {
+class Picobot(val map: Map, val rules: Seq[Rule]) {
   import Picobot._
-  
+
   require(rules.length > 0)
-  
+
   // the robot's current state
   var state: State = rules(0).startState
-  
+
   // the robot's current position (initially a random location)
-  private var _position: Position = randomStartPosition(maze)  
+  private var _position: Position = randomStartPosition(map)
   def position = _position
 
   // the positions that the robot has visited (initially empty)
@@ -29,56 +26,56 @@ class Picobot(val maze: Maze, val rules: List[Rule]) {
   def visited = _visited
 
   // the total number of non-wall positions
-  private var numOpenPositions: Int = maze.height * maze.width - maze.wallPositions.size
+  private var numOpenPositions: Int = map.height * map.width - map.wallPositions.size
 
   /** The number of positions the robot has yet to visit (initially the number of open
     * positions). When this value is 0, the robot's search is at an end.
     */
   def numPositionsToVisit: Int = numOpenPositions - visited.size
-  
+
   // drop the robot in the maze
   moveRobotTo(position)
 
-  /** 
+  /**
    * Reset the robot, so it can be re-run
    */
   def reset() = {
     state = rules(0).startState
-    _position = randomStartPosition(maze)
+    _position = randomStartPosition(map)
     _visited = Set.empty[Position]
-    numOpenPositions = maze.height * maze.width - maze.wallPositions.size
+    numOpenPositions = map.height * map.width - map.wallPositions.size
     moveRobotTo(position)
   }
 
-  /** Move the robot to a specified position. 
-    * 
+  /** Move the robot to a specified position.
+    *
     * Raises an error if the robot is not allowed to occupy the given position
     *
     */
   def moveRobotTo(pos: Position) {
     // error checking: can't move to an illegal position
-    require(!maze.isWall(pos) && maze.isInBounds(pos))
-    
+    require(!map.isWall(pos) && map.isInBounds(pos))
+
     _position = pos
     _visited += pos
   }
-  
+
   override def toString =
-    (0 until maze.width).map(col =>
-        (0 until maze.height).map(row =>
+    (0 until map.width).map(col =>
+        (0 until map.height).map(row =>
           {
             val p = Position(row, col)
             if (p == position) {
               Picobot.ROBOT_CHARACTER
             } else if (visited.contains(p)) {
               Picobot.VISITED_CHARACTER
-            } else if (maze.isWall(p)) {
-              Maze.WALL_CHARACTER
+            } else if (map.isWall(p)) {
+              Map.WALL_CHARACTER
             } else {
-              Maze.NOWALL_CHARACTER
+              Map.NOWALL_CHARACTER
             }})
         .mkString(""))
-      .mkString("\n") +  
+      .mkString("\n") +
       "\n%9s: %s\n%9s: %2s\n%9s: %s".format("Pos", position, "State", state,
                                             "Unvisited", numPositionsToVisit)
 
@@ -93,23 +90,23 @@ class Picobot(val maze: Maze, val rules: List[Rule]) {
     while (canMove)
       step()
   }
-  
+
   /**
    * @return true if there is a rule that applies and the robot can move
    */
   def canMove = numPositionsToVisit != 0 && rules.find(matchRule).isDefined
-  
+
   /**
    * Do one step of the computation
    */
   def step(): Unit = rules.find(matchRule).map(this.update)
-  
+
   private def matchRule(rule: Rule): Boolean = {
-      
+
       def matchRuleDir(description: RelativeDescription, pos: Position): Boolean =
-        (description == Anything) || 
-        (maze.isWall(pos) && description == Blocked) ||
-        (!maze.isWall(pos) && description == Open)
+        (description == Anything) ||
+        (map.isWall(pos) && description == Blocked) ||
+        (!map.isWall(pos) && description == Open)
 
       (rule.startState == state) &&
         matchRuleDir(rule.surroundings.north, position.northOf) &&
@@ -139,7 +136,7 @@ object Picobot {
    /**
      * finds a random position in the maze that is not a wall
      */
-   private def randomStartPosition(maze: Maze): Position = {
+   private def randomStartPosition(maze: Map): Position = {
       import java.util.Random
       var random = new Random(System.currentTimeMillis())
       var position = Position(0,0)
