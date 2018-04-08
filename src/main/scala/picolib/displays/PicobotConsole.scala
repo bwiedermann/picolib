@@ -1,8 +1,7 @@
 package picolib.displays
 
-abstract class PicobotConsoleApp extends App with PicobotConsoleController {
-
-}
+/** An app that displays the picobot in the console */
+abstract class PicobotConsoleApp extends App with PicobotConsoleController
 
 trait PicobotConsoleController extends PicobotController {
 

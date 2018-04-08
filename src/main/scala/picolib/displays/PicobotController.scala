@@ -2,10 +2,15 @@ package picolib.displays
 
 import picolib.{Map, Picobot, Rule}
 
+/**
+  * A Picobot program
+  *
+  * Assign values to `map` and `rules`, then call `run`.
+  */
 trait PicobotController {
-  protected var _map: Map = null
-  protected var _rules: Seq[Rule] = null
-  protected var _bot: Picobot = null
+  protected var _map: Map = _
+  protected var _rules: Seq[Rule] = _
+  protected var _bot: Picobot = _
 
   initBot()
 
@@ -29,6 +34,7 @@ trait PicobotController {
     initBot()
   }
 
+  /** Run the bot until it stops */
   def run(): Unit = {
     if (this.bot != null) {
       while (this.bot.canMove) {
@@ -36,8 +42,10 @@ trait PicobotController {
       }
     }
   }
+
+  /** Run the bot one step */
   def step(): Unit = if (this.bot != null) this.bot.step()
+
+  /** Reset the bot */
   def reset(): Unit = if (this.bot != null) this.bot.reset()
 }
-
-

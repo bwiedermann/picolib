@@ -1,6 +1,6 @@
 package picolib.displays
 
-import picolib.{Picobot, Position}
+import picolib.Position
 
 import scala.language.postfixOps
 import scalafx.Includes._
@@ -27,14 +27,12 @@ abstract class PicobotGUIApp extends JFXApp with PicobotGUIController {
   stage = makeStage()
 }
 
-/**
- * GUI controls and displays for a Picobot, based on ScalaFX
- */
+/** GUI controls and displays for a Picobot, based on ScalaFX */
 trait PicobotGUIController extends PicobotController {this: JFXApp =>
   import PicobotGUIController._
 
   private lazy val runButton = new Button("Run") {
-    onAction = {_ => runFull()}
+    onAction = {_ => runBot()}
   }
 
   private lazy val stopButton = new Button("Stop") {
@@ -49,18 +47,17 @@ trait PicobotGUIController extends PicobotController {this: JFXApp =>
     onAction = {_ => reset() }
   }
 
-  // a pane with all the buttons to control the animation
+  /** a pane with all the buttons to control the animation */
   private lazy val buttonPane =
     new HBox{children = List(runButton, stopButton, stepButton, resetButton)}
 
-  // a pane that contains a visualization for each cell in the map
+  /** a pane that contains a visualization for each cell in the map */
   private lazy val mapPane = new Pane{children = botboxes}
 
-  // a pane for the controller and the map
+  /** a pane for the controller and the map */
   private lazy val botPane = new VBox {children = List(buttonPane, mapPane)}
 
   def makeStage(): PrimaryStage = {
-    val bot = this.bot
     val mapWidth = if (this.bot == null) 0 else this.bot.map.width
     val mapHeight = if (this.bot == null) 0 else this.bot.map.height
     mapPane.children = botboxes
@@ -84,19 +81,22 @@ trait PicobotGUIController extends PicobotController {this: JFXApp =>
     mapPane.children = botboxes
   }
 
+  /** Display the GUI (but don't run the bot) */
   override def run(): Unit = {
     this.stage = makeStage()
   }
 
-  def runFull(): Unit = {
+  /** Set the bot in motion */
+  def runBot(): Unit = {
     stepAnimation.cycleCount = Timeline.Indefinite
     stepAnimation.play()
   }
 
+  /** Stop the bot */
   def stop(): Unit = stepAnimation.stop()
 
-  /** an event that steps the bot and updates the display */
-  val stepEvent = {
+  /** An event that steps the bot and updates the display */
+  val stepEvent: ActionEvent => Unit = {
     _: ActionEvent ⇒
       if (this.bot.canMove) {
         super.step()
@@ -104,16 +104,11 @@ trait PicobotGUIController extends PicobotController {this: JFXApp =>
       }
   }
 
-  /**
-   *  A timeline with one keyframe that steps the bot, then displays the results
-   */
   val stepAnimation: Timeline = new Timeline {
     keyFrames = Seq(KeyFrame(10 ms, onFinished = stepEvent))
   }
 
-   /**
-   * Make a GUI version of the map
-   */
+   /** Makes a GUI version of the map */
   def botboxes: Seq[Rectangle] = {
 
     // Make a GUI cell at a given position, colored according to its contents
@@ -132,9 +127,7 @@ trait PicobotGUIController extends PicobotController {this: JFXApp =>
       this.bot.map.positions map makeCell
   }
 
-  /**
-   * What color should a cell be?
-   */
+  /** Determines the color for a cell in the map */
   def cellColor(pos: Position): Color = {
     if (this.bot.map.isWall(pos))
       WALL_COLOR
